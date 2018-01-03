@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include android:id="@+id/category_toolbar"
+    <include android:id="@+id/meal_toolbar"
         layout="@layout/toolbar"/>
 
     <TextView
@@ -16,12 +16,9 @@
         android:textSize="32sp"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/category_recycler_view"
+        android:id="@+id/meal_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 </LinearLayout>

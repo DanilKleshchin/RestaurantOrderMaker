@@ -1,19 +1,20 @@
 package com.kleshchin.danil.ordermaker.activities
 
-import CategoryAdapter
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.Toolbar
 import com.kleshchin.danil.ordermaker.R
+import com.kleshchin.danil.ordermaker.adapters.CategoryAdapter
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.category_activity.*
 
 class CategoryActivity : AppCompatActivity() {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: CategoryAdapter
-    var categories: ArrayList<CategoryMeal> = ArrayList()
+    private var categories: ArrayList<CategoryMeal> = ArrayList()
 
     init {
         categories.add(CategoryMeal("Первое"))
@@ -26,6 +27,14 @@ class CategoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.category_activity)
+
+        setSupportActionBar(category_toolbar as Toolbar)
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false)
+            actionBar.setHomeButtonEnabled(false)
+            actionBar.setDisplayShowTitleEnabled(false)
+        }
 
         adapter = CategoryAdapter(categories)
         linearLayoutManager = LinearLayoutManager(this)

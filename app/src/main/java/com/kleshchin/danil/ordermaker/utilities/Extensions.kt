@@ -1,3 +1,5 @@
+package com.kleshchin.danil.ordermaker.utilities
+
 import android.support.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
