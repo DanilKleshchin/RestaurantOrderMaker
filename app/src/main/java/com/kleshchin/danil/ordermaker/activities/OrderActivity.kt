@@ -1,12 +1,13 @@
-package com.kleshchin.danil.ordermaker
+package com.kleshchin.danil.ordermaker.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.kleshchin.danil.ordermaker.R
 
-class MainActivity : AppCompatActivity() {
+class OrderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
+        setContentView(R.layout.order_activity)
     }
 }
