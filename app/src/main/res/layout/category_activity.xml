@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include android:id="@+id/category_toolbar"
+    <include
+        android:id="@+id/category_toolbar"
         layout="@layout/toolbar"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/restaurant_name"
-        android:textColor="@android:color/black"
-        android:textSize="32sp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/category_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
         android:layout_gravity="center"/>
 
     <ImageView

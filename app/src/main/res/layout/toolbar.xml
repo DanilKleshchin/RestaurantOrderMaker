@@ -1,18 +1,24 @@
 <android.support.v7.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:theme="@style/ToolbarTheme"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+    android:theme="@style/ToolbarTheme">
 
-    <TextView
-        android:id="@+id/toolbar_title"
+    <!--
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/colorText"
+            android:textSize="16sp"/>
+    -->
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/app_name"
-        android:textColor="@color/colorAccent"
-        android:textSize="16sp"/>
+        android:layout_height="?attr/actionBarSize"
+        android:foregroundGravity="center"
+        android:src="@drawable/ocaka_logo"
+        android:contentDescription="@null"/>
 </android.support.v7.widget.Toolbar>
