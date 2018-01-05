@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.activities.MealActivity
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
+import com.kleshchin.danil.ordermaker.utilities.CircleTransform
 import com.kleshchin.danil.ordermaker.utilities.inflate
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_category_recycler_view.view.*
 
 class CategoryAdapter(private val mealCategories: ArrayList<CategoryMeal>) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
@@ -45,6 +47,7 @@ class CategoryAdapter(private val mealCategories: ArrayList<CategoryMeal>) : Rec
         fun bindCategory(mealCategory: CategoryMeal) {
             this.mealCategory = mealCategory
             view.category_name.text = mealCategory.name
+            Picasso.with(view.context).load(mealCategory.image).into(view.category_icon)
         }
     }
 }

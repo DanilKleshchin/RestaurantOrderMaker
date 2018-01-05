@@ -1,6 +1,7 @@
 package com.kleshchin.danil.ordermaker.activities
 
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
@@ -16,16 +17,18 @@ class CategoryActivity : AppCompatActivity() {
     private var categories: ArrayList<CategoryMeal> = ArrayList()
 
     init {
-        categories.add(CategoryMeal("Первое"))
-        categories.add(CategoryMeal("Второе"))
-        categories.add(CategoryMeal("Закуски"))
-        categories.add(CategoryMeal("Напитки"))
+        categories.add(CategoryMeal("Первое", R.drawable.first))
+        categories.add(CategoryMeal("Второе", R.drawable.second))
+        categories.add(CategoryMeal("Закуски", R.drawable.zakuski))
+        categories.add(CategoryMeal("Напитки", R.drawable.napitki))
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.category_activity)
+
+
 
         setSupportActionBar(category_toolbar as Toolbar)
         val actionBar = supportActionBar
