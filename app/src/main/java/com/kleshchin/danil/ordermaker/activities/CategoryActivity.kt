@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar
 import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.adapters.CategoryAdapter
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.category_activity.*
 
 class CategoryActivity : AppCompatActivity() {
