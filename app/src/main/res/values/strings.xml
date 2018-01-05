@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">Order Maker</string>
+    <string name="app_name">Мобильное меню</string>
     <string name="restaurant_name">ОСАКА Т</string>
+    <string name="basket">корзина</string>
 </resources>
