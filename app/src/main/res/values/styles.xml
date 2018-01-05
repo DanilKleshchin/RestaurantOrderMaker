@@ -4,12 +4,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="actionMenuTextColor">@color/colorAccent</item>
+        <item name="actionMenuTextColor">@color/colorText</item>
         <item name="android:textColorSecondary">@color/colorAccent</item>
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorText</item>
     </style>
 
     <style name="ToolbarTheme" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColor">@color/colorAccent</item>
     </style>
 
