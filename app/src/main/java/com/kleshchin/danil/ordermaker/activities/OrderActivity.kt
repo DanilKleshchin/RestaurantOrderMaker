@@ -87,11 +87,18 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0) {
             button_place_order -> {
-                sendOrderToServer()
-                createStatusNotification()
-                finish()
+                onPlaceOrderButtonClick()
             }
         }
+    }
+
+    private fun onPlaceOrderButtonClick() {
+        if (totalAmount == 0) {
+            return
+        }
+        sendOrderToServer()
+        createStatusNotification()
+        openCategoryActivity()
     }
 
     private fun sendOrderToServer() {
@@ -99,10 +106,6 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun createStatusNotification() {
-        if (totalAmount == 0) {
-            return
-        }
-
         var intent = Intent()
         var pendingIntent = PendingIntent.getActivity(this@OrderActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         var notificationBuilder =
@@ -127,13 +130,18 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
         notificationManager.notify(notificationId, notification)
     }
 
+    private fun openCategoryActivity() {
+        val intent = Intent(this@OrderActivity, CategoryActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intent)
+    }
+
     private fun cancelNotification() {
         var notificationManager: NotificationManager = this@OrderActivity.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId)
     }
 
     abstract class SwipeToDeleteCallback(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-
         private val deleteIcon = ContextCompat.getDrawable(context, R.drawable.delete_icon)
         private val intrinsicWidth = deleteIcon.intrinsicWidth
         private val intrinsicHeight = deleteIcon.intrinsicHeight
