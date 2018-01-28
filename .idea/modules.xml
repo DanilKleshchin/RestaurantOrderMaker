@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://D:\KleshchinDanil\MDKP\RestaurantOrderMaker\OrderMaker.iml" filepath="D:\KleshchinDanil\MDKP\RestaurantOrderMaker\OrderMaker.iml" />
       <module fileurl="file://$PROJECT_DIR$/RestaurantOrderMaker.iml" filepath="$PROJECT_DIR$/RestaurantOrderMaker.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
