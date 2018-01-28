@@ -64,7 +64,7 @@ class MealAdapter(private val mealList: ArrayList<Meal>) : RecyclerView.Adapter<
                 }
                 else -> {
                     val context = itemView.context
-                    val categoryIntent = Intent(context, MealInfoActivity::class.java)
+                    val categoryIntent = MealInfoActivity.getMealInfoIntent(v.context, this.meal)
                     categoryIntent.putExtra(MEAL_KEY, meal)
                     context.startActivity(categoryIntent)
                 }
@@ -75,7 +75,7 @@ class MealAdapter(private val mealList: ArrayList<Meal>) : RecyclerView.Adapter<
             this.meal = meal
             view.meal_name.text = meal.mealName
             Picasso.with(view.context).load(meal.mealIconUrl).transform(CircleTransform()).into(view.meal_icon)
-            view.meal_price.text = meal.mealPrice
+            view.meal_price.text = String.format(view.context.resources.getString(R.string.meal_price), meal.mealPrice)
             view.meal_check_box.isChecked = meal.isCheckedMeal
         }
     }

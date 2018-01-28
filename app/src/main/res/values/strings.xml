@@ -2,4 +2,9 @@
     <string name="app_name">Мобильное меню</string>
     <string name="restaurant_name">ОСАКА Т</string>
     <string name="basket">корзина</string>
+    <string name="add_to_basket">Добавить в корзину</string>
+    <string name="your_order">Ваш заказ</string>
+    <string name="place_order">Оформить заказ</string>
+    <string name="order_total">Итого: %1$s руб.</string>
+    <string name="meal_price">%1$s руб.</string>
 </resources>
