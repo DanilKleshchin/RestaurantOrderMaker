@@ -27,18 +27,24 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
         val pizza = "http://supercook.ru/images-pizza/page-pizza-pastry-04.jpg"
         val funchoza = "https://i.ytimg.com/vi/TVaCQs5rS6c/maxresdefault.jpg"
         val shaurma = "https://www.edimdoma.ru/data/ckeditor_pictures/27454/content_fotolia_119231708_subscription_xxl.jpg"
-        meals.add(Meal("Суши", sushi, "300 руб", false))
-        meals.add(Meal("Вок", wok, "500 руб", false))
-        meals.add(Meal("Фунчоза", funchoza, "200 руб", false))
-        meals.add(Meal("Пицца", pizza, "400 руб", false))
-        meals.add(Meal("Шаурма", shaurma, "350 руб", false))
-        meals.add(Meal("Паста", url, "100 руб", false))
-        meals.add(Meal("Суши", sushi, "300 руб", false))
-        meals.add(Meal("Вок", wok, "500 руб", false))
-        meals.add(Meal("Фунчоза", funchoza, "200 руб", false))
-        meals.add(Meal("Пицца", pizza, "400 руб", false))
-        meals.add(Meal("Шаурма", shaurma, "350 руб", false))
-        meals.add(Meal("Паста", url, "100 руб", false))
+        val description = "Суши, или как на них говорят японцы — суси — традиционное блюдо японской кухни," +
+                " главным ингредиентом которого является рис. В наших краях принято все виды суши " +
+                "называть «суши», однако любимое блюдо у нас – это роллы, настоящее название которых " +
+                "— макиили макидзуси, что в переводе означает — закрученные суши. Таким образом можно" +
+                " на следующий вопрос: Чем отличаются роллы от суши? Суши — небольшой комок, специально" +
+                " приготовленного риса, сформированный руками, на который положен небольшой кусочек рыбы."
+        meals.add(Meal("Суши", sushi, 300, false, description))
+        meals.add(Meal("Вок", wok, 500, false, description))
+        meals.add(Meal("Фунчоза", funchoza, 200, false, description))
+        meals.add(Meal("Пицца", pizza, 400, false, description))
+        meals.add(Meal("Шаурма", shaurma, 350, false, description))
+        meals.add(Meal("Паста", url, 100, false, description))
+        meals.add(Meal("Суши", sushi, 300, false, description))
+        meals.add(Meal("Вок", wok, 500, false, description))
+        meals.add(Meal("Фунчоза", funchoza, 200, false, description))
+        meals.add(Meal("Пицца", pizza, 400, false, description))
+        meals.add(Meal("Шаурма", shaurma, 350, false, description))
+        meals.add(Meal("Паста", url, 100, false, description))
     }
 
 
@@ -80,7 +86,7 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when(menuItem.itemId) {
+        when (menuItem.itemId) {
             android.R.id.home -> finish()
             R.id.basket -> onBasketClick()
         }
@@ -88,7 +94,7 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
     }
 
     private fun onBasketClick() {
-        val intent: Intent = Intent(this, OrderActivity::class.java)
+        val intent = OrderActivity.getOrderIntent(this, this.checkedMeals)
         startActivity(intent)
     }
 }
