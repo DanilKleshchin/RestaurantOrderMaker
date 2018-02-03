@@ -5,6 +5,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
+import com.facebook.stetho.Stetho
 import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.adapters.CategoryAdapter
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
@@ -28,7 +29,7 @@ class CategoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.category_activity)
 
-
+        Stetho.initializeWithDefaults(this)
 
         setSupportActionBar(category_toolbar as Toolbar)
         val actionBar = supportActionBar
