@@ -1,0 +1,14 @@
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:theme="@style/ToolbarTheme">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="?attr/actionBarSize"
+        android:contentDescription="@null"
+        android:foregroundGravity="center"
+        android:src="@drawable/ocaka_logo"/>
+</android.support.v7.widget.Toolbar>
