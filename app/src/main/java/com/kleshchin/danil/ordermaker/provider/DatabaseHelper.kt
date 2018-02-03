@@ -1,15 +1,12 @@
 package com.kleshchin.danil.ordermaker.provider
 
+import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.content.ContentValues
-import android.database.Cursor
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
 import com.kleshchin.danil.ordermaker.models.Meal
-import android.R.attr.data
-
-
 
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {

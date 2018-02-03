@@ -7,4 +7,6 @@
     <string name="place_order">Оформить заказ</string>
     <string name="order_total">Итого: %1$s руб.</string>
     <string name="meal_price">%1$s руб.</string>
+    <string name="order_status">Статус заказа</string>
+    <string name="order_in_queue">Ваш заказ находится в очереди на приготовление. Ожидайте</string>
 </resources>

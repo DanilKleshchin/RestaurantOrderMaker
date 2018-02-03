@@ -116,8 +116,8 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
                         .setWhen(System.currentTimeMillis())
                         .setAutoCancel(false)
 
-                        .setContentTitle("Статус заказа")
-                        .setStyle(Notification.BigTextStyle().bigText("Ваш заказ находится в очереди на приготовление. Ожидайте"))
+                        .setContentTitle(getString(R.string.order_status))
+                        .setStyle(Notification.BigTextStyle().bigText(getString(R.string.order_in_queue)))
                         .setOngoing(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
