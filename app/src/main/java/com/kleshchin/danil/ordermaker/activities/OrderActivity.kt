@@ -106,9 +106,9 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun createStatusNotification() {
-        var intent = Intent()
-        var pendingIntent = PendingIntent.getActivity(this@OrderActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        var notificationBuilder =
+        val intent = Intent()
+        val pendingIntent = PendingIntent.getActivity(this@OrderActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val notificationBuilder =
                 Notification.Builder(this@OrderActivity)
                         .setContentIntent(pendingIntent)
                         .setSmallIcon(android.R.drawable.ic_menu_info_details)
@@ -123,10 +123,10 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             notificationBuilder.setShowWhen(true)
         }
-        var notification = notificationBuilder.build()
+        val notification = notificationBuilder.build()
         notification.defaults = Notification.DEFAULT_SOUND
         notification.defaults = Notification.DEFAULT_VIBRATE
-        var notificationManager: NotificationManager = this@OrderActivity.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager = this@OrderActivity.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(notificationId, notification)
     }
 
@@ -137,7 +137,7 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun cancelNotification() {
-        var notificationManager: NotificationManager = this@OrderActivity.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager = this@OrderActivity.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId)
     }
 
