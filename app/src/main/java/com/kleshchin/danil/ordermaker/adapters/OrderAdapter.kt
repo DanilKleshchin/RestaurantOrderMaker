@@ -37,7 +37,7 @@ class OrderAdapter(private val mealList: ArrayList<Meal>?) : RecyclerView.Adapte
 
     fun removeAt(position: Int) {
         mealList?.removeAt(position)
-        notifyItemRemoved(position)
+        notifyDataSetChanged()
     }
 
     class OrderViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
