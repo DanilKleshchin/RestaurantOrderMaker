@@ -22,7 +22,8 @@
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:contentDescription="@null"/>
+            android:contentDescription="@null"
+            tools:src="@drawable/first"/>
 
         <TextView
             android:id="@+id/meal_name"
