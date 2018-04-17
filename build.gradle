@@ -9,6 +9,10 @@ buildscript {
         supportLibraryVersion = '26.1.0'
         stethoVersion = '1.5.0'
         picassoVersion = '2.5.2'
+        okHttpVersion = '3.10.0'
+        compileSdkVersionValue = 26
+        targetSdkVersionValue = 26
+        minSdkVersionValue = 16
     }
 
     dependencies {
