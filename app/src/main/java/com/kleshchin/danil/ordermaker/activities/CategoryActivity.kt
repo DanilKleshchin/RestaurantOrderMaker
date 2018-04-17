@@ -43,5 +43,15 @@ class CategoryActivity : AppCompatActivity() {
         linearLayoutManager = LinearLayoutManager(this)
         category_recycler_view.layoutManager = this.linearLayoutManager
         category_recycler_view.adapter = adapter
+        changeRecyclerViewVisibility()
+    }
+    private fun changeRecyclerViewVisibility() {
+        if(category_recycler_view.visibility == VISIBLE) {
+            category_recycler_view.visibility = GONE
+            category_empty_view.visibility = VISIBLE
+        } else {
+            category_recycler_view.visibility = VISIBLE
+            category_empty_view.visibility = GONE
+        }
     }
 }

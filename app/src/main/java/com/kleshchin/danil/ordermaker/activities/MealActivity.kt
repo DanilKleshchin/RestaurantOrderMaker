@@ -45,6 +45,7 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
         linearLayoutManager = LinearLayoutManager(this)
         meal_recycler_view.layoutManager = this.linearLayoutManager
         meal_recycler_view.adapter = adapter
+        changeRecyclerViewVisibility()
     }
 
     override fun onMealCheckedChange(isChecked: Boolean, meal: Meal?) {
@@ -76,5 +77,15 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
     private fun onBasketClick() {
         val intent = OrderActivity.getOrderIntent(this, this.checkedMeals)
         startActivity(intent)
+    }
+
+    private fun changeRecyclerViewVisibility() {
+        if (meal_recycler_view.visibility == View.VISIBLE) {
+            meal_recycler_view.visibility = View.GONE
+            meal_empty_view.visibility = View.VISIBLE
+        } else {
+            meal_recycler_view.visibility = View.VISIBLE
+            meal_empty_view.visibility = View.GONE
+        }
     }
 }
