@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.kleshchin.danil.ordermaker.OrderMakerRepository
 import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.adapters.MealAdapter
@@ -34,11 +35,15 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
             actionBar.setDisplayShowTitleEnabled(false)
         }
 
-        val repository = OrderMakerRepository(this, this)
+        val repository = OrderMakerRepository
+        repository.setOnReceiveMealInformationListener(this, this)
         repository.loadMeal()
     }
 
-    override fun onMealReceive(mealList: ArrayList<Meal>) {
+    override fun onMealReceive(mealList: ArrayList<Meal>?) {
+        if (mealList == null || mealList.isEmpty()) {
+            return
+        }
         meals = mealList
         adapter = MealAdapter(meals)
         adapter.setOnMealCheckedListener(this)

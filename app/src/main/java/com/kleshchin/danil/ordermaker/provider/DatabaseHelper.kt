@@ -1,5 +1,6 @@
 package com.kleshchin.danil.ordermaker.provider
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -13,7 +14,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "FootballInfo"
+        private val DATABASE_NAME = "OrderMaker"
 
         val KEY_ID = "_id"
 
@@ -27,19 +28,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val KEY_MEAL_PRICE = "Meal_Price"
         val KEY_MEAL_INFO = "Meal_Info"
 
-        fun createCategoryContentValues(categories: List<CategoryMeal>): Array<ContentValues> {
-            val contentValuesArray: Array<ContentValues> = emptyArray()
+
+        fun createCategoryContentValues(categories: ArrayList<CategoryMeal>): Array<ContentValues> {
+            val contentValuesArray: Array<ContentValues> = Array(categories.size, { ContentValues() })
             for (i in categories.indices) {
                 val contentValues = ContentValues()
                 contentValues.put(KEY_CATEGORY_NAME, categories[i].categoryName)
-                contentValues.put(KEY_CATEGORY_ICON_URL, categories[i].categoryImage)
+                contentValues.put(KEY_CATEGORY_ICON_URL, categories[i].categoryImageUrl)
                 contentValuesArray[i] = contentValues
             }
             return contentValuesArray
         }
 
         fun createMealContentValues(categories: ArrayList<Meal>): Array<ContentValues> {
-            val contentValuesArray: Array<ContentValues> = Array(categories.size, {ContentValues()})
+            val contentValuesArray: Array<ContentValues> = Array(categories.size, { ContentValues() })
             for (i in categories.indices) {
                 val contentValues = ContentValues()
                 contentValues.put(KEY_MEAL_NAME, categories[i].mealName)
@@ -51,30 +53,46 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             return contentValuesArray
         }
 
-        fun createCategoryFromCursor(data: Cursor): ArrayList<CategoryMeal> {
+        fun createCategoryFromCursor(data: Cursor): ArrayList<CategoryMeal>? {
             val competitions = ArrayList<CategoryMeal>()
-            data.moveToPosition(-1)
-            while (data.moveToNext()) {
-                val name = data.getString(data.getColumnIndex(KEY_MEAL_NAME))
-                val iconUrl = data.getInt(data.getColumnIndex(KEY_CATEGORY_ICON_URL))
-                val meal = CategoryMeal(name, iconUrl)
-                competitions.add(meal)
+            if (data.moveToFirst()) {
+                do {
+                    val name = data.getString(data.getColumnIndex(KEY_CATEGORY_NAME))
+                    val iconUrl = data.getString(data.getColumnIndex(KEY_CATEGORY_ICON_URL))
+                    val meal = CategoryMeal(name, iconUrl)
+                    competitions.add(meal)
+                } while (data.moveToNext())
+                return competitions
             }
-            return competitions
+            return null
         }
 
-        fun createMealFromCursor(data: Cursor): ArrayList<Meal> {
+        fun createMealFromCursor(data: Cursor): ArrayList<Meal>? {
             val competitions = ArrayList<Meal>()
-            data.moveToPosition(-1)
-            while (data.moveToNext()) {
-                val name = data.getString(data.getColumnIndex(KEY_MEAL_NAME))
-                val iconUrl = data.getString(data.getColumnIndex(KEY_MEAL_ICON_URL))
-                val price = data.getInt(data.getColumnIndex(KEY_MEAL_PRICE))
-                val info = data.getString(data.getColumnIndex(KEY_MEAL_INFO))
-                val meal = Meal(name, iconUrl, price, false, info)
-                competitions.add(meal)
+            if (data.moveToFirst()) {
+                do {
+                    val name = data.getString(data.getColumnIndex(KEY_MEAL_NAME))
+                    val iconUrl = data.getString(data.getColumnIndex(KEY_MEAL_ICON_URL))
+                    val price = data.getInt(data.getColumnIndex(KEY_MEAL_PRICE))
+                    val info = data.getString(data.getColumnIndex(KEY_MEAL_INFO))
+                    val meal = Meal(name, iconUrl, price, false, info)
+                    competitions.add(meal)
+                } while (data.moveToNext())
+                return competitions
             }
-            return competitions
+            return null
+        }
+
+        fun insertCategoryList(categoryList: ArrayList<CategoryMeal>, resolver: ContentResolver) {
+            val uri = OrderMakerProvider.createUrlForTable(DatabaseHelper.CATEGORY_TABLE)
+            resolver.delete(uri, null, null)
+            resolver.bulkInsert(uri, DatabaseHelper.createCategoryContentValues(categoryList))
+        }
+
+        fun insertMealList(mealList: ArrayList<Meal>, resolver: ContentResolver) {
+            val uri = OrderMakerProvider.createUrlForTable(DatabaseHelper.MEAL_TABLE)
+            resolver.delete(uri, null, null)
+            resolver.bulkInsert(uri, DatabaseHelper.createMealContentValues(mealList))
         }
     }
 
