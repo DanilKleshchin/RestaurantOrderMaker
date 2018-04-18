@@ -8,6 +8,7 @@ import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
 import com.kleshchin.danil.ordermaker.models.Meal
 import com.kleshchin.danil.ordermaker.provider.DatabaseHelper
@@ -25,6 +26,8 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
     private val CATEGORY_CODE = 0
     private val MEAL_CODE = 1
+    private val TAG = "OrderMakerRepository"
+    private val OKHTTP_TAG = "OrderMakerRepository"
 
     private var categoryListener: OnReceiveCategoryInformationListener? = null
     private var mealListener: OnReceiveMealInformationListener? = null
@@ -118,18 +121,21 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
         private fun loadCategory() {
             try {
+                val url = "http://192.168.0.104:3000/category"
                 val client = OkHttpClient()
                 val request = Request.Builder()
-                        .url("http://192.168.0.102:3000/category")
+                        .url(url)
                         .build()
                 var responses: Response? = null
                 try {
                     responses = client.newCall(request).execute()
+                    Log.i(OKHTTP_TAG, "Load url " + url)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
                 val categoryList: ArrayList<CategoryMeal> = ArrayList()
                 val jsonData = responses?.body()?.string()
+                Log.i(OKHTTP_TAG, jsonData)
                 val jsonArray = JSONArray(jsonData)
                 for (i in 0..(jsonArray.length() - 1)) {
                     val jsonObject = jsonArray.getJSONObject(i)
@@ -148,18 +154,21 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
         private fun loadMeal() {
             try {
+                val url = "http://192.168.0.104:3000/meal"
                 val client = OkHttpClient()
                 val request = Request.Builder()
-                        .url("http://192.168.0.102:3000/meal")
+                        .url(url)
                         .build()
                 var responses: Response? = null
                 try {
                     responses = client.newCall(request).execute()
+                    Log.i(OKHTTP_TAG, "Load url " + url)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
                 val mealList: ArrayList<Meal> = ArrayList()
                 val jsonData = responses?.body()?.string()
+                Log.i(OKHTTP_TAG, jsonData)
                 val jsonArray = JSONArray(jsonData)
                 for (i in 0..(jsonArray.length() - 1)) {
                     val jsonObject = jsonArray.getJSONObject(i)
