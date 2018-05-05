@@ -9,13 +9,6 @@ data class Meal(var categoryId : Int, var name: String, var iconUrl: String, var
         return 0
     }
 
-    /*var categoryId: Int = categoryId
-    var mealName: String = name
-    var mealIconUrl: String = iconUrl
-    var mealPrice: Int = price
-    var isCheckedMeal: Boolean = isChecked
-    var mealInfo: String = info*/
-
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
             parcel.readString(),

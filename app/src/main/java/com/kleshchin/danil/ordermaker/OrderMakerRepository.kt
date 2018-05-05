@@ -13,13 +13,13 @@ import com.kleshchin.danil.ordermaker.models.CategoryMeal
 import com.kleshchin.danil.ordermaker.models.Meal
 import com.kleshchin.danil.ordermaker.provider.DatabaseHelper
 import com.kleshchin.danil.ordermaker.provider.OrderMakerProvider
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
+import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.IOException
 import java.lang.ref.WeakReference
+import android.os.AsyncTask.execute
+import org.json.JSONObject
 
 
 object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
@@ -60,6 +60,28 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
     fun loadMeal(categoryId: Int) {
         val loader = InfoDownloader(InfoDownloader.Models.Meal, categoryId)
         loader.execute()
+    }
+
+    fun sendMeal(meal: Meal) {
+        Thread {
+            val client = OkHttpClient()
+            val requestBody = FormBody.Builder()
+                    .add("categoryId", meal.categoryId.toString())
+                    .add("name", meal.name)
+                    .add("price", meal.price.toString())
+                    .add("imageUrl", meal.iconUrl)
+                    .add("description", meal.info)
+                    .build()
+            val request = Request.Builder()
+                    .url(SERVER_ADDRESS + "/order")
+                    .post(requestBody)
+                    .build()
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful()) {
+                throw IOException("Unexpected code $response")
+            }
+        }.start()
+
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {

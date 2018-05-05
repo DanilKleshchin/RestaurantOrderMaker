@@ -22,6 +22,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.view.View
+import com.kleshchin.danil.ordermaker.OrderMakerRepository
 import kotlinx.android.synthetic.main.order_activity.*
 import java.util.*
 
@@ -102,7 +103,12 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun sendOrderToServer() {
-
+        if (meals.isEmpty()) {
+            return
+        }
+        for (meal in meals) {
+            OrderMakerRepository.sendMeal(meal)
+        }
     }
 
     private fun createStatusNotification() {
