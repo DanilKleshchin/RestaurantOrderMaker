@@ -1,5 +1,6 @@
 package com.kleshchin.danil.ordermaker.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -12,15 +13,28 @@ import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.adapters.MealAdapter
 import com.kleshchin.danil.ordermaker.models.Meal
 import kotlinx.android.synthetic.main.meal_activity.*
+import android.content.Intent
+import com.kleshchin.danil.ordermaker.activities.MealInfoActivity.Companion.MEAL_KEY
 
 
-class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheckedChangeListener,
+class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealClickListener,
         OrderMakerRepository.OnReceiveMealInformationListener {
 
+    private val RESULT_CODE = 1
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: MealAdapter
     private var meals: ArrayList<Meal> = ArrayList()
     private var checkedMeals: ArrayList<Meal> = ArrayList()
+
+    companion object {
+        private val CATEGORY_KEY = "CATEGORY"
+
+        fun newInstance(context: Context, categoryId: Int) {
+            val categoryIntent = Intent(context, MealActivity::class.java)
+            categoryIntent.putExtra(CATEGORY_KEY, categoryId)
+            context.startActivity(categoryIntent)
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,9 +49,10 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
             actionBar.setDisplayShowTitleEnabled(false)
         }
 
+        val categoryId: Int = intent.extras.getInt(CATEGORY_KEY)
         val repository = OrderMakerRepository
         repository.setOnReceiveMealInformationListener(this, this)
-        repository.loadMeal()
+        repository.loadMeal(categoryId)
     }
 
     override fun onMealReceive(mealList: ArrayList<Meal>?) {
@@ -65,6 +80,12 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
         }
     }
 
+    override fun onMealInfoClick(meal: Meal?) {
+        val categoryIntent = MealInfoActivity.getMealInfoIntent(this, meal)
+        categoryIntent.putExtra(MEAL_KEY, meal)
+        startActivityForResult(categoryIntent, RESULT_CODE)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.meal_toolbar_menu, menu)
@@ -77,6 +98,17 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealCheck
             R.id.basket -> onBasketClick()
         }
         return super.onOptionsItemSelected(menuItem)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null) {
+            return
+        }
+        if (data.getBooleanExtra(MealInfoActivity.KEY_CHECKED_STATUS, false)) {
+            val meal: Meal = data.getParcelableExtra(MealInfoActivity.MEAL_KEY)
+            checkedMeals.add(meal)
+            (meal_recycler_view.adapter as MealAdapter).setCheckedMeal(meals.indexOf(meal))
+        }
     }
 
     private fun onBasketClick() {

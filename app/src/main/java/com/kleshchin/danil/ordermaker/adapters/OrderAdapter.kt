@@ -57,8 +57,8 @@ class OrderAdapter(private val mealList: ArrayList<Meal>?) : RecyclerView.Adapte
 
         fun bindMeal(meal: Meal) {
             this.meal = meal
-            view.order_meal_name.text = meal.mealName
-            view.order_meal_price.text = String.format(view.context.resources.getString(R.string.meal_price), meal.mealPrice)
+            view.order_meal_name.text = meal.name
+            view.order_meal_price.text = String.format(view.context.resources.getString(R.string.meal_price), meal.price)
             view.order_position.text = (adapterPosition + 1).toString()
         }
     }

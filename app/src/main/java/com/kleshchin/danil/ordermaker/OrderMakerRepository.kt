@@ -28,6 +28,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
     private val MEAL_CODE = 1
     private val TAG = "OrderMakerRepository"
     private val OKHTTP_TAG = "OrderMakerRepository"
+    private val SERVER_ADDRESS = "http://192.168.0.102:3000"
 
     private var categoryListener: OnReceiveCategoryInformationListener? = null
     private var mealListener: OnReceiveMealInformationListener? = null
@@ -56,8 +57,8 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
         categoryLoader.execute()
     }
 
-    fun loadMeal() {
-        val loader = InfoDownloader(InfoDownloader.Models.Meal)
+    fun loadMeal(categoryId: Int) {
+        val loader = InfoDownloader(InfoDownloader.Models.Meal, categoryId)
         loader.execute()
     }
 
@@ -88,7 +89,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
     }
 
-    private class InfoDownloader(var model : Models) : AsyncTask<Void, Void, Void>() {
+    private class InfoDownloader(var model: Models, var id: Int = -1) : AsyncTask<Void, Void, Void>() {
         enum class Models {
             Meal, Category
         }
@@ -99,7 +100,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                     loadCategory()
                 }
                 Models.Meal -> {
-                    loadMeal()
+                    loadMeal(id)
                 }
             }
             return null
@@ -121,7 +122,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
         private fun loadCategory() {
             try {
-                val url = "http://192.168.0.104:3000/category"
+                val url = SERVER_ADDRESS + "/category"
                 val client = OkHttpClient()
                 val request = Request.Builder()
                         .url(url)
@@ -140,8 +141,9 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                 for (i in 0..(jsonArray.length() - 1)) {
                     val jsonObject = jsonArray.getJSONObject(i)
                     val name = jsonObject.getString("name")
-                    val imageUrl = jsonObject.getString("imageUrl")
-                    categoryList.add(CategoryMeal(name, imageUrl))
+                    val imageUrl = SERVER_ADDRESS + jsonObject.getString("imageUrl")
+                    val id = jsonObject.getInt("id")
+                    categoryList.add(CategoryMeal(id, name, imageUrl))
                 }
                 val resolver = context?.get()?.contentResolver
                 if (resolver != null) {
@@ -152,9 +154,9 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
             }
         }
 
-        private fun loadMeal() {
+        private fun loadMeal(categoryId: Int) {
             try {
-                val url = "http://192.168.0.104:3000/meal"
+                val url = SERVER_ADDRESS + "/meal"
                 val client = OkHttpClient()
                 val request = Request.Builder()
                         .url(url)
@@ -172,11 +174,13 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                 val jsonArray = JSONArray(jsonData)
                 for (i in 0..(jsonArray.length() - 1)) {
                     val jsonObject = jsonArray.getJSONObject(i)
-                    val name = jsonObject.getString("name")
-                    val imageUrl = jsonObject.getString("imageUrl")
-                    val price = jsonObject.getInt("price")
-                    val description = jsonObject.getString("description")
-                    mealList.add(Meal(name, imageUrl, price, false, description))
+                    if (jsonObject.getInt("categoryId") == categoryId) {
+                        val name = jsonObject.getString("name")
+                        val imageUrl = SERVER_ADDRESS + jsonObject.getString("imageUrl")
+                        val price = jsonObject.getInt("price")
+                        val description = jsonObject.getString("description")
+                        mealList.add(Meal(categoryId, name, imageUrl, price, false, description))
+                    }
                 }
                 val resolver = context?.get()?.contentResolver
                 if (resolver != null) {

@@ -62,7 +62,7 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
         val swipeHandler = object : SwipeToDeleteCallback(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val adapter = order_recycler_view.adapter as OrderAdapter
-                totalAmount -= meals[viewHolder.adapterPosition].mealPrice
+                totalAmount -= meals[viewHolder.adapterPosition].price
                 adapter.removeAt(viewHolder.adapterPosition)
                 order_total.text = String.format(resources.getString(R.string.order_total), totalAmount)
             }
@@ -70,7 +70,7 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(order_recycler_view)
 
-        totalAmount = meals.sumBy { it.mealPrice }
+        totalAmount = meals.sumBy { it.price }
         order_total.text = String.format(resources.getString(R.string.order_total), totalAmount)
     }
 

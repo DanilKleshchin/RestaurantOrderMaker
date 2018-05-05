@@ -13,12 +13,13 @@ import com.kleshchin.danil.ordermaker.models.Meal
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        private val DATABASE_VERSION = 1
+        private val DATABASE_VERSION = 2
         private val DATABASE_NAME = "OrderMaker"
 
         val KEY_ID = "_id"
 
         val CATEGORY_TABLE = "Category"
+        val KEY_CATEGORY_ID = "Category_Id"
         val KEY_CATEGORY_NAME = "Category_Name"
         val KEY_CATEGORY_ICON_URL = "Category_Icon_Url"
 
@@ -27,6 +28,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val KEY_MEAL_ICON_URL = "Meal_Icon_Url"
         val KEY_MEAL_PRICE = "Meal_Price"
         val KEY_MEAL_INFO = "Meal_Info"
+        val KEY_MEAL_CATEGORY_ID = "Meal_Category_Id"
 
 
         fun createCategoryContentValues(categories: ArrayList<CategoryMeal>): Array<ContentValues> {
@@ -35,6 +37,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val contentValues = ContentValues()
                 contentValues.put(KEY_CATEGORY_NAME, categories[i].categoryName)
                 contentValues.put(KEY_CATEGORY_ICON_URL, categories[i].categoryImageUrl)
+                contentValues.put(KEY_CATEGORY_ID, categories[i].id)
                 contentValuesArray[i] = contentValues
             }
             return contentValuesArray
@@ -44,10 +47,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             val contentValuesArray: Array<ContentValues> = Array(categories.size, { ContentValues() })
             for (i in categories.indices) {
                 val contentValues = ContentValues()
-                contentValues.put(KEY_MEAL_NAME, categories[i].mealName)
-                contentValues.put(KEY_MEAL_ICON_URL, categories[i].mealIconUrl)
-                contentValues.put(KEY_MEAL_PRICE, categories[i].mealPrice)
-                contentValues.put(KEY_MEAL_INFO, categories[i].mealInfo)
+                contentValues.put(KEY_MEAL_NAME, categories[i].name)
+                contentValues.put(KEY_MEAL_ICON_URL, categories[i].iconUrl)
+                contentValues.put(KEY_MEAL_PRICE, categories[i].price)
+                contentValues.put(KEY_MEAL_INFO, categories[i].info)
+                contentValues.put(KEY_MEAL_CATEGORY_ID, categories[i].categoryId)
                 contentValuesArray[i] = contentValues
             }
             return contentValuesArray
@@ -59,7 +63,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 do {
                     val name = data.getString(data.getColumnIndex(KEY_CATEGORY_NAME))
                     val iconUrl = data.getString(data.getColumnIndex(KEY_CATEGORY_ICON_URL))
-                    val meal = CategoryMeal(name, iconUrl)
+                    val id = data.getInt(data.getColumnIndex(KEY_CATEGORY_ID))
+                    val meal = CategoryMeal(id, name, iconUrl)
                     competitions.add(meal)
                 } while (data.moveToNext())
                 return competitions
@@ -75,7 +80,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     val iconUrl = data.getString(data.getColumnIndex(KEY_MEAL_ICON_URL))
                     val price = data.getInt(data.getColumnIndex(KEY_MEAL_PRICE))
                     val info = data.getString(data.getColumnIndex(KEY_MEAL_INFO))
-                    val meal = Meal(name, iconUrl, price, false, info)
+                    val categoryId = data.getInt(data.getColumnIndex(KEY_MEAL_CATEGORY_ID))
+                    val meal = Meal(categoryId, name, iconUrl, price, false, info)
                     competitions.add(meal)
                 } while (data.moveToNext())
                 return competitions
@@ -103,12 +109,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     private val BRACKET_LEFT_SEP = "("
 
     private val CREATE_CATEGORY_TABLE = "CREATE TABLE " + CATEGORY_TABLE + BRACKET_LEFT_SEP +
-            KEY_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
+            KEY_CATEGORY_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
             KEY_CATEGORY_NAME + TEXT_TYPE + COMMA_SEP +
             KEY_CATEGORY_ICON_URL + TEXT_TYPE + BRACKET_RIGHT_SEP
 
     private val CREATE_MEAL_TABLE = "CREATE TABLE " + MEAL_TABLE + BRACKET_LEFT_SEP +
             KEY_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
+            KEY_MEAL_CATEGORY_ID + INT_TYPE + COMMA_SEP +
             KEY_MEAL_NAME + TEXT_TYPE + COMMA_SEP +
             KEY_MEAL_ICON_URL + TEXT_TYPE + COMMA_SEP +
             KEY_MEAL_PRICE + INT_TYPE + COMMA_SEP +
