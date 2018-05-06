@@ -1,11 +1,8 @@
 package com.kleshchin.danil.ordermaker.activities
 
-import android.app.Notification
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -19,10 +16,11 @@ import com.kleshchin.danil.ordermaker.adapters.OrderAdapter
 import com.kleshchin.danil.ordermaker.models.Meal
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.view.View
 import com.kleshchin.danil.ordermaker.OrderMakerRepository
+import com.kleshchin.danil.ordermaker.models.Order
+import com.kleshchin.danil.ordermaker.utilities.MacAddressGetter
 import kotlinx.android.synthetic.main.order_activity.*
 import java.util.*
 
@@ -32,9 +30,10 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: OrderAdapter
     private var totalAmount = 0
+    private lateinit var macAddress: String
 
     companion object {
-        private val MEAL_ARRAY_KEY = "MEAL_ARRAY_KEY"
+        private const val MEAL_ARRAY_KEY = "MEAL_ARRAY_KEY"
 
         fun getOrderIntent(context: Context, meal: ArrayList<Meal>?): Intent {
             val intent = Intent(context, OrderActivity::class.java)
@@ -45,6 +44,8 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.order_activity)
+
+        macAddress = MacAddressGetter.getWiFiMacAddress(this)
 
         setSupportActionBar(order_toolbar as Toolbar)
         val actionBar = supportActionBar
@@ -98,7 +99,6 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
         sendOrderToServer()
-        createStatusNotification()
         openCategoryActivity()
     }
 
@@ -107,33 +107,9 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
         for (meal in meals) {
-            OrderMakerRepository.sendMeal(meal)
+            val order = Order(meal.name, macAddress, System.currentTimeMillis(), Order.OrderStatus.Queue)
+            OrderMakerRepository.sendOrder(order)
         }
-    }
-
-    private fun createStatusNotification() {
-        val intent = Intent()
-        val pendingIntent = PendingIntent.getActivity(this@OrderActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val notificationBuilder =
-                Notification.Builder(this@OrderActivity)
-                        .setContentIntent(pendingIntent)
-                        .setSmallIcon(android.R.drawable.ic_menu_info_details)
-                        .setLargeIcon(BitmapFactory.decodeResource(this@OrderActivity.resources, R.mipmap.ocaka_logo_icon))
-                        .setWhen(System.currentTimeMillis())
-                        .setAutoCancel(false)
-
-                        .setContentTitle(getString(R.string.order_status))
-                        .setStyle(Notification.BigTextStyle().bigText(getString(R.string.order_in_queue)))
-                        .setOngoing(true)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            notificationBuilder.setShowWhen(true)
-        }
-        val notification = notificationBuilder.build()
-        notification.defaults = Notification.DEFAULT_SOUND
-        notification.defaults = Notification.DEFAULT_VIBRATE
-        val notificationManager: NotificationManager = this@OrderActivity.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(notificationId, notification)
     }
 
     private fun openCategoryActivity() {

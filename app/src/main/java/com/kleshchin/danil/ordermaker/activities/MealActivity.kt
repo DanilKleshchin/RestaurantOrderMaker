@@ -48,14 +48,15 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealClick
             actionBar.setHomeButtonEnabled(true)
             actionBar.setDisplayShowTitleEnabled(false)
         }
+        pull_to_refresh.setOnRefreshListener {
+            loadMeal()
+        }
 
-        val categoryId: Int = intent.extras.getInt(CATEGORY_KEY)
-        val repository = OrderMakerRepository
-        repository.setOnReceiveMealInformationListener(this, this)
-        repository.loadMeal(categoryId)
+        loadMeal()
     }
 
     override fun onMealReceive(mealList: ArrayList<Meal>?) {
+        pull_to_refresh.isRefreshing = false
         if (mealList == null || mealList.isEmpty()) {
             return
         }
@@ -111,17 +112,24 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealClick
         }
     }
 
+    private fun loadMeal() {
+        val categoryId: Int = intent.extras.getInt(CATEGORY_KEY)
+        val repository = OrderMakerRepository
+        repository.setOnReceiveMealInformationListener(this, this)
+        repository.loadMeal(categoryId)
+    }
+
     private fun onBasketClick() {
         val intent = OrderActivity.getOrderIntent(this, this.checkedMeals)
         startActivity(intent)
     }
 
     private fun changeRecyclerViewVisibility() {
-        if (meal_recycler_view.visibility == View.VISIBLE) {
-            meal_recycler_view.visibility = View.GONE
+        if (meals.isEmpty()) {
+            pull_to_refresh.visibility = View.GONE
             meal_empty_view.visibility = View.VISIBLE
         } else {
-            meal_recycler_view.visibility = View.VISIBLE
+            pull_to_refresh.visibility = View.VISIBLE
             meal_empty_view.visibility = View.GONE
         }
     }

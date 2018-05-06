@@ -15,16 +15,22 @@
         android:layout_height="2dp"
         android:background="@color/colorAccent"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/meal_recycler_view"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/pull_to_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scrollbarSize="4dp"
-        android:scrollbarThumbVertical="@drawable/scrollbar"
-        android:scrollbars="vertical"
         android:visibility="gone"
-        tools:listitem="@layout/item_meal_recycler_view"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/meal_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scrollbarSize="4dp"
+            android:scrollbarThumbVertical="@drawable/scrollbar"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_meal_recycler_view"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/meal_empty_view"

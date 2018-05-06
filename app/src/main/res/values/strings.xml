@@ -2,6 +2,7 @@
     <string name="app_name">Мобильное меню</string>
     <string name="restaurant_name">ОСАКА Т</string>
     <string name="basket">корзина</string>
+    <string name="status">Статус</string>
     <string name="add_to_basket">Добавить в корзину</string>
     <string name="your_order">Ваш заказ</string>
     <string name="place_order">Оформить заказ</string>
@@ -9,4 +10,6 @@
     <string name="meal_price">%1$s руб.</string>
     <string name="order_status">Статус заказа</string>
     <string name="order_in_queue">Ваш заказ находится в очереди на приготовление. Ожидайте</string>
+    <string name="dialog_title">Статус заказа</string>
+
 </resources>

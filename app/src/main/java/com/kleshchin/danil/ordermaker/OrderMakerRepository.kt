@@ -11,15 +11,17 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
 import com.kleshchin.danil.ordermaker.models.Meal
+import com.kleshchin.danil.ordermaker.models.Order
 import com.kleshchin.danil.ordermaker.provider.DatabaseHelper
 import com.kleshchin.danil.ordermaker.provider.OrderMakerProvider
-import okhttp3.*
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.IOException
 import java.lang.ref.WeakReference
-import android.os.AsyncTask.execute
-import org.json.JSONObject
 
 
 object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
@@ -32,6 +34,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
     private var categoryListener: OnReceiveCategoryInformationListener? = null
     private var mealListener: OnReceiveMealInformationListener? = null
+    private var orderStatusListener: OnOrderStatusListener? = null
     private var context: WeakReference<Context>? = null
 
     interface OnReceiveCategoryInformationListener {
@@ -40,6 +43,10 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
     interface OnReceiveMealInformationListener {
         fun onMealReceive(mealList: ArrayList<Meal>?)
+    }
+
+    interface OnOrderStatusListener {
+        fun onOrderStatusReceive(orderList: ArrayList<Order>?)
     }
 
     fun setOnReceiveMealInformationListener(context: Context, listener: OnReceiveMealInformationListener) {
@@ -52,7 +59,11 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
         categoryListener = listener
     }
 
-    fun loadCategory() {
+    fun setOnOrderStatusListener(listener: OnOrderStatusListener) {
+        orderStatusListener = listener
+    }
+
+    fun loadOrderStatus() {
         val categoryLoader = InfoDownloader(InfoDownloader.Models.Category)
         categoryLoader.execute()
     }
@@ -62,26 +73,29 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
         loader.execute()
     }
 
-    fun sendMeal(meal: Meal) {
+    fun sendOrder(order: Order) {
         Thread {
             val client = OkHttpClient()
             val requestBody = FormBody.Builder()
-                    .add("categoryId", meal.categoryId.toString())
-                    .add("name", meal.name)
-                    .add("price", meal.price.toString())
-                    .add("imageUrl", meal.iconUrl)
-                    .add("description", meal.info)
+                    .add("mealName", order.mealName)
+                    .add("macAddress", order.mac)
+                    .add("number", order.number.toString())
+                    .add("status", Order.OrderStatus.Queue.toString())
                     .build()
             val request = Request.Builder()
                     .url(SERVER_ADDRESS + "/order")
                     .post(requestBody)
                     .build()
+            Log.i(OKHTTP_TAG, "POST " + request.url() + " " + requestBody.toString())
             val response = client.newCall(request).execute()
             if (!response.isSuccessful()) {
-                throw IOException("Unexpected code $response")
+                Log.e(TAG, response.toString())
             }
         }.start()
+    }
 
+    fun getOrderStatus(macAddress: String) {
+        OrderDownloader(macAddress).execute()
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
@@ -157,7 +171,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                     e.printStackTrace()
                 }
                 val categoryList: ArrayList<CategoryMeal> = ArrayList()
-                val jsonData = responses?.body()?.string()
+                val jsonData = responses?.body()?.string() ?: return
                 Log.i(OKHTTP_TAG, jsonData)
                 val jsonArray = JSONArray(jsonData)
                 for (i in 0..(jsonArray.length() - 1)) {
@@ -191,7 +205,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                     e.printStackTrace()
                 }
                 val mealList: ArrayList<Meal> = ArrayList()
-                val jsonData = responses?.body()?.string()
+                val jsonData = responses?.body()?.string() ?: return
                 Log.i(OKHTTP_TAG, jsonData)
                 val jsonArray = JSONArray(jsonData)
                 for (i in 0..(jsonArray.length() - 1)) {
@@ -212,5 +226,54 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                 e.printStackTrace()
             }
         }
+    }
+
+    private class OrderDownloader(var macAddress: String) : AsyncTask<Void, Void, ArrayList<Order>?>() {
+        override fun doInBackground(vararg p0: Void?): ArrayList<Order>? {
+            return loadOrderStatus()
+
+        }
+
+        override fun onPostExecute(result: ArrayList<Order>?) {
+
+            orderStatusListener!!.onOrderStatusReceive(result)
+            super.onPostExecute(result)
+        }
+
+        private fun loadOrderStatus(): ArrayList<Order>? {
+            try {
+                val url = SERVER_ADDRESS + "/order"
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                        .url(url)
+                        .build()
+                var responses: Response? = null
+                try {
+                    responses = client.newCall(request).execute()
+                    Log.i(OKHTTP_TAG, "Load url " + url)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                val orderList: ArrayList<Order> = ArrayList()
+                val jsonData = responses?.body()?.string()
+                Log.i(OKHTTP_TAG, jsonData)
+                val jsonArray = JSONArray(jsonData)
+                for (i in 0..(jsonArray.length() - 1)) {
+                    val jsonObject = jsonArray.getJSONObject(i)
+                    val mac = jsonObject.getString("macAddress")
+                    if (mac == macAddress) {
+                        val name = jsonObject.getString("mealName")
+                        val number = jsonObject.getLong("number")
+                        val status = Order.OrderStatus.valueOf(jsonObject.getString("status"))
+                        orderList.add(Order(name, mac, number, status))
+                    }
+                }
+                return orderList
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
     }
 }
