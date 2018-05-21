@@ -1,16 +1,28 @@
 package com.kleshchin.danil.ordermaker.adapters
 
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import com.kleshchin.danil.ordermaker.OrderMakerRepository
 import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.activities.MealActivity
+import com.kleshchin.danil.ordermaker.activities.ReportActivity
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
 import com.kleshchin.danil.ordermaker.utilities.inflate
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_category_recycler_view.view.*
 
-class CategoryAdapter(private val mealCategories: ArrayList<CategoryMeal>) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+class CategoryAdapter(): RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+
+    private var reportCell: CategoryMeal = CategoryMeal(0, "Отзыв",
+            OrderMakerRepository.SERVER_ADDRESS + "/assets/images/report.jpg")
+    private lateinit var mealCategories: ArrayList<CategoryMeal>
+
+    constructor(mealCategories: ArrayList<CategoryMeal>) : this() {
+        this.mealCategories = mealCategories
+        this.mealCategories.add(reportCell)
+    }
 
     override fun getItemCount() = mealCategories.size
 
@@ -34,6 +46,12 @@ class CategoryAdapter(private val mealCategories: ArrayList<CategoryMeal>) : Rec
 
         override fun onClick(v: View) {
             val context = itemView.context
+            if (mealCategory.id == 0) {
+                val intent = Intent(context, ReportActivity::class.java)
+                context.startActivity(intent)
+                return
+            }
+
             MealActivity.newInstance(context, mealCategory.id)
         }
 

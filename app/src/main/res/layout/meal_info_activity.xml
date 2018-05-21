@@ -23,7 +23,7 @@
         android:layout_gravity="center"
         android:fontFamily="@font/palatino_linotype"
         android:gravity="center"
-        android:textColor="@color/colorText"
+        android:textColor="@color/mealInfoColor"
         android:textSize="32sp"
         tools:text="Суши"/>
 
@@ -63,7 +63,7 @@
                     android:layout_gravity="center"
                     android:fontFamily="@font/palatino_linotype"
                     android:gravity="center"
-                    android:textColor="@color/colorText"
+                    android:textColor="@color/mealInfoColor"
                     android:textSize="25sp"
                     tools:text="Суши суши суши суши суши суши суши"/>
 

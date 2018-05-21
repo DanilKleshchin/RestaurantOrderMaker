@@ -100,7 +100,7 @@ class CategoryActivity : AppCompatActivity(), OrderMakerRepository.OnReceiveCate
     private fun loadCategory() {
         val repository = OrderMakerRepository
         repository.setOnReceiveCategoryInformationListener(this, this)
-        repository.loadOrderStatus()
+        repository.loadCategory()
     }
 
     private fun changeRecyclerViewVisibility() {

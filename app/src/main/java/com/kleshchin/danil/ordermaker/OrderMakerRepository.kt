@@ -14,6 +14,7 @@ import com.kleshchin.danil.ordermaker.models.Meal
 import com.kleshchin.danil.ordermaker.models.Order
 import com.kleshchin.danil.ordermaker.provider.DatabaseHelper
 import com.kleshchin.danil.ordermaker.provider.OrderMakerProvider
+import com.kleshchin.danil.ordermaker.utilities.OrderJsonParser
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -30,11 +31,12 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
     private val MEAL_CODE = 1
     private val TAG = "OrderMakerRepository"
     private val OKHTTP_TAG = "OrderMakerRepository"
-    private val SERVER_ADDRESS = "http://192.168.0.102:3000"
+    val SERVER_ADDRESS = "http://192.168.0.102:3000"
 
     private var categoryListener: OnReceiveCategoryInformationListener? = null
     private var mealListener: OnReceiveMealInformationListener? = null
     private var orderStatusListener: OnOrderStatusListener? = null
+    private var onReportReceiveListener: OnReportReceiveListener? = null
     private var context: WeakReference<Context>? = null
 
     interface OnReceiveCategoryInformationListener {
@@ -47,6 +49,10 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
     interface OnOrderStatusListener {
         fun onOrderStatusReceive(orderList: ArrayList<Order>?)
+    }
+
+    interface OnReportReceiveListener {
+        fun onReportReceive(reportList: ArrayList<String>?)
     }
 
     fun setOnReceiveMealInformationListener(context: Context, listener: OnReceiveMealInformationListener) {
@@ -63,9 +69,21 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
         orderStatusListener = listener
     }
 
-    fun loadOrderStatus() {
+    fun setOnReportReceiveListener(listener: OnReportReceiveListener) {
+        onReportReceiveListener = listener
+    }
+
+    fun adding(a: Int, b: Int): Int {
+        return a + b;
+    }
+
+    fun loadCategory() {
         val categoryLoader = InfoDownloader(InfoDownloader.Models.Category)
         categoryLoader.execute()
+    }
+
+    fun loadReport() {
+        ReportDownloader.execute()
     }
 
     fun loadMeal(categoryId: Int) {
@@ -170,20 +188,12 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                val categoryList: ArrayList<CategoryMeal> = ArrayList()
                 val jsonData = responses?.body()?.string() ?: return
                 Log.i(OKHTTP_TAG, jsonData)
-                val jsonArray = JSONArray(jsonData)
-                for (i in 0..(jsonArray.length() - 1)) {
-                    val jsonObject = jsonArray.getJSONObject(i)
-                    val name = jsonObject.getString("name")
-                    val imageUrl = SERVER_ADDRESS + jsonObject.getString("imageUrl")
-                    val id = jsonObject.getInt("id")
-                    categoryList.add(CategoryMeal(id, name, imageUrl))
-                }
+
                 val resolver = context?.get()?.contentResolver
                 if (resolver != null) {
-                    DatabaseHelper.insertCategoryList(categoryList, resolver)
+                    DatabaseHelper.insertCategoryList(OrderJsonParser.parseCategoryJson(jsonData), resolver)
                 }
             } catch (e: JSONException) {
                 e.printStackTrace()
@@ -204,23 +214,11 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                val mealList: ArrayList<Meal> = ArrayList()
                 val jsonData = responses?.body()?.string() ?: return
-                Log.i(OKHTTP_TAG, jsonData)
-                val jsonArray = JSONArray(jsonData)
-                for (i in 0..(jsonArray.length() - 1)) {
-                    val jsonObject = jsonArray.getJSONObject(i)
-                    if (jsonObject.getInt("categoryId") == categoryId) {
-                        val name = jsonObject.getString("name")
-                        val imageUrl = SERVER_ADDRESS + jsonObject.getString("imageUrl")
-                        val price = jsonObject.getInt("price")
-                        val description = jsonObject.getString("description")
-                        mealList.add(Meal(categoryId, name, imageUrl, price, false, description))
-                    }
-                }
+
                 val resolver = context?.get()?.contentResolver
                 if (resolver != null) {
-                    DatabaseHelper.insertMealList(mealList, resolver)
+                    DatabaseHelper.insertMealList(OrderJsonParser.parseMealJson(categoryId, jsonData), resolver)
                 }
             } catch (e: JSONException) {
                 e.printStackTrace()
@@ -269,6 +267,44 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                     }
                 }
                 return orderList
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+    }
+
+    private object ReportDownloader: AsyncTask<Void, Void, ArrayList<String>?>() {
+
+        override fun doInBackground(vararg p0: Void?): ArrayList<String>? {
+            return loadOrderStatus()
+
+        }
+
+        override fun onPostExecute(result: ArrayList<String>?) {
+
+            onReportReceiveListener!!.onReportReceive(result)
+            super.onPostExecute(result)
+        }
+
+        private fun loadOrderStatus(): ArrayList<String>? {
+            try {
+                val url = SERVER_ADDRESS + "/report"
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                        .url(url)
+                        .build()
+                var responses: Response? = null
+                try {
+                    responses = client.newCall(request).execute()
+                    Log.i(OKHTTP_TAG, "Load url " + url)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                val jsonData = responses?.body()?.string()
+                Log.i(OKHTTP_TAG, jsonData)
+                return OrderJsonParser.parseReportJson(jsonData!!)
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
