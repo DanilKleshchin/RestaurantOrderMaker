@@ -11,11 +11,17 @@ import com.kleshchin.danil.ordermaker.OrderMakerRepository
 import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.adapters.ReportAdapter
 import kotlinx.android.synthetic.main.report_activity.*
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
+import android.view.View
+import android.widget.EditText
+
+
 
 /**
  * Created by Danil Kleshchin on 21-May-18.
  */
-class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveListener {
+class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveListener, View.OnClickListener {
 
     private var reports: ArrayList<String> = ArrayList()
 
@@ -31,6 +37,8 @@ class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveL
             actionBar.setHomeButtonEnabled(false)
             actionBar.setDisplayShowTitleEnabled(false)
         }
+
+        add_report_fab.setOnClickListener(this)
 
         OrderMakerRepository.setOnReportReceiveListener(this)
 
@@ -54,6 +62,12 @@ class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveL
         changeRecyclerViewVisibility()
     }
 
+    override fun onClick(p0: View?) {
+        if (p0?.id == R.id.add_report_fab) {
+            onAddReportClick()
+        }
+    }
+
     private fun loadReport() {
         OrderMakerRepository.loadReport()
     }
@@ -66,5 +80,26 @@ class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveL
             report_pull_to_refresh.visibility = VISIBLE
             report_empty_view.visibility = GONE
         }
+    }
+
+    private fun onAddReportClick() {
+        val reportEditText = EditText(this)
+        reportEditText.maxLines = 6
+
+        reportEditText.hint = "Введите ваше сообщение"
+
+        AlertDialog.Builder(this)
+                .setTitle("Отзыв о ресторане")
+                .setView(reportEditText)
+                .setPositiveButton("Ок", DialogInterface.OnClickListener { dialog, whichButton ->
+                    val report = reportEditText.text.toString()
+                    sendReport(report)
+                })
+                .setNegativeButton("Отмена", DialogInterface.OnClickListener { dialog, whichButton -> })
+                .show()
+    }
+
+    private fun sendReport(report: String) {
+
     }
 }
