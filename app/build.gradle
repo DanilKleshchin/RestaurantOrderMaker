@@ -25,4 +25,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.json:json:20140107'
 }

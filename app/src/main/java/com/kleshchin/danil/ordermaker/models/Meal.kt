@@ -3,7 +3,7 @@ package com.kleshchin.danil.ordermaker.models
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Meal(var categoryId : Int, var name: String, var iconUrl: String, var price: Int,
+data class Meal(var categoryId: Int, var name: String, var iconUrl: String, var price: Int,
                 var isChecked: Boolean, var info: String) : Parcelable {
     override fun describeContents(): Int {
         return 0
@@ -34,5 +34,20 @@ data class Meal(var categoryId : Int, var name: String, var iconUrl: String, var
         override fun newArray(size: Int): Array<Meal?> {
             return arrayOfNulls(size)
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other.javaClass != this.javaClass) {
+            return false
+        }
+
+        var o = other as Meal
+
+        return o.categoryId == this.categoryId &&
+                o.name == this.name &&
+                o.iconUrl == this.iconUrl &&
+                o.price == price &&
+                o.info == this.info
+
     }
 }
