@@ -14,7 +14,12 @@ import com.kleshchin.danil.ordermaker.adapters.MealAdapter
 import com.kleshchin.danil.ordermaker.models.Meal
 import kotlinx.android.synthetic.main.meal_activity.*
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import com.kleshchin.danil.ordermaker.activities.MealInfoActivity.Companion.MEAL_KEY
+import com.kleshchin.danil.ordermaker.models.ColorScheme
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.toolbar.*
 
 
 class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealClickListener,
@@ -48,11 +53,29 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealClick
             actionBar.setHomeButtonEnabled(true)
             actionBar.setDisplayShowTitleEnabled(false)
         }
+
+        val url = OrderMakerRepository.SERVER_ADDRESS + OrderMakerRepository.DESIGN_ADDRESS
+        Picasso.with(this).load(url).into(toolbar_logo_image)
         pull_to_refresh.setOnRefreshListener {
             loadMeal()
         }
 
         loadMeal()
+
+        var deepColor = Color.parseColor(ColorScheme.colorAccent)
+        top_view.setBackgroundColor(deepColor)
+        pull_to_refresh.setBackgroundColor(Color.parseColor(ColorScheme.colorBackground))
+        meal_empty_view.indeterminateDrawable.setColorFilter(
+                Color.parseColor(ColorScheme.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN);
+        meal_toolbar.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
+        basket_button.setTextColor(Color.parseColor(ColorScheme.colorText))
+        basket_button.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
+        (meal_toolbar as Toolbar).getNavigationIcon()?.setColorFilter(deepColor, PorterDuff.Mode.SRC_ATOP)
+        meal_recycler_view.adapter?.notifyDataSetChanged()
+
+        basket_button.setOnClickListener {
+            onBasketClick()
+        }
     }
 
     override fun onMealReceive(mealList: ArrayList<Meal>?) {
@@ -87,16 +110,9 @@ class MealActivity : AppCompatActivity(), MealAdapter.MealViewHolder.OnMealClick
         startActivityForResult(categoryIntent, RESULT_CODE)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.meal_toolbar_menu, menu)
-        return true
-    }
-
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             android.R.id.home -> finish()
-            R.id.basket -> onBasketClick()
         }
         return super.onOptionsItemSelected(menuItem)
     }

@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Meal(var categoryId: Int, var name: String, var iconUrl: String, var price: Int,
-                var isChecked: Boolean, var info: String) : Parcelable {
+                var isChecked: Boolean, var info: String, var count: Int) : Parcelable {
     override fun describeContents(): Int {
         return 0
     }
@@ -15,7 +15,8 @@ data class Meal(var categoryId: Int, var name: String, var iconUrl: String, var 
             parcel.readString(),
             parcel.readInt(),
             parcel.readByte() != 0.toByte(),
-            parcel.readString())
+            parcel.readString(),
+            parcel.readInt())
 
     override fun writeToParcel(p0: Parcel?, p1: Int) {
         p0?.writeInt(this.categoryId)
@@ -24,6 +25,7 @@ data class Meal(var categoryId: Int, var name: String, var iconUrl: String, var 
         p0?.writeInt(this.price)
         p0?.writeByte((if (this.isChecked) 1 else 0).toByte())
         p0?.writeString(this.info)
+        p0?.writeInt(this.count)
     }
 
     companion object CREATOR : Parcelable.Creator<Meal> {

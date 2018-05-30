@@ -10,11 +10,13 @@
         layout="@layout/toolbar"/>
 
     <View
+        android:id="@+id/top_view"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/colorAccent"/>
 
     <TextView
+        android:id="@+id/order_text_view"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_gravity="center"
@@ -26,6 +28,7 @@
         android:textSize="24sp"/>
 
     <View
+        android:id="@+id/middle_view"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/colorAccent"/>
@@ -57,6 +60,7 @@
             tools:text="Итого: 500 руб"/>
 
         <View
+            android:id="@+id/bottom_view"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="@color/colorAccent"/>

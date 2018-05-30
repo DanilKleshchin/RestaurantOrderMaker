@@ -12,10 +12,16 @@ import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.adapters.ReportAdapter
 import kotlinx.android.synthetic.main.report_activity.*
 import android.content.DialogInterface
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.support.v7.app.AlertDialog
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
-
+import com.kleshchin.danil.ordermaker.models.ColorScheme
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.toolbar.*
 
 
 /**
@@ -33,12 +39,14 @@ class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveL
         setSupportActionBar(report_toolbar as Toolbar)
         val actionBar = supportActionBar
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false)
-            actionBar.setHomeButtonEnabled(false)
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setHomeButtonEnabled(true)
             actionBar.setDisplayShowTitleEnabled(false)
         }
 
         add_report_fab.setOnClickListener(this)
+        val url = OrderMakerRepository.SERVER_ADDRESS + OrderMakerRepository.DESIGN_ADDRESS
+        Picasso.with(this).load(url).into(toolbar_logo_image)
 
         OrderMakerRepository.setOnReportReceiveListener(this)
 
@@ -47,6 +55,14 @@ class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveL
         }
 
         loadReport()
+
+        report_toolbar.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
+        (report_toolbar as Toolbar).navigationIcon?.setColorFilter(Color.parseColor(ColorScheme.colorAccent), PorterDuff.Mode.SRC_ATOP)
+        top_view.setBackgroundColor(Color.parseColor(ColorScheme.colorAccent))
+        container_background.setBackgroundColor(Color.parseColor(ColorScheme.colorBackground))
+        report_empty_view.indeterminateDrawable.setColorFilter(
+                Color.parseColor(ColorScheme.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN);
+        add_report_fab.backgroundTintList = ColorStateList.valueOf(Color.parseColor(ColorScheme.colorAccent))
     }
 
     override fun onReportReceive(reportList: ArrayList<String>?) {
@@ -66,6 +82,13 @@ class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveL
         if (p0?.id == R.id.add_report_fab) {
             onAddReportClick()
         }
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            android.R.id.home -> finish()
+        }
+        return super.onOptionsItemSelected(menuItem)
     }
 
     private fun loadReport() {
@@ -100,6 +123,7 @@ class ReportActivity: AppCompatActivity(), OrderMakerRepository.OnReportReceiveL
     }
 
     private fun sendReport(report: String) {
-
+        (report_recycler_view.adapter as ReportAdapter).setReport(report)
+        OrderMakerRepository.sendReport(report)
     }
 }

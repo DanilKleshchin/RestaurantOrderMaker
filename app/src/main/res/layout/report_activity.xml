@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include
@@ -11,12 +12,15 @@
         layout="@layout/toolbar"/>
 
     <View
+        android:id="@+id/top_view"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/colorAccent"/>
 
     <FrameLayout
-        android:layout_width="match_parent" android:layout_height="match_parent">
+        android:id="@+id/container_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/report_pull_to_refresh"

@@ -15,13 +15,17 @@ import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.adapters.OrderAdapter
 import com.kleshchin.danil.ordermaker.models.Meal
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
 import android.view.View
 import com.kleshchin.danil.ordermaker.OrderMakerRepository
+import com.kleshchin.danil.ordermaker.models.ColorScheme
 import com.kleshchin.danil.ordermaker.models.Order
 import com.kleshchin.danil.ordermaker.utilities.MacAddressGetter
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.order_activity.*
+import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
 
 class OrderActivity : AppCompatActivity(), View.OnClickListener {
@@ -74,6 +78,21 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
 
         totalAmount = meals.sumBy { it.price }
         order_total.text = String.format(resources.getString(R.string.order_total), totalAmount)
+
+        val url = OrderMakerRepository.SERVER_ADDRESS + OrderMakerRepository.DESIGN_ADDRESS
+        Picasso.with(this).load(url).into(toolbar_logo_image)
+
+        top_view.setBackgroundColor(Color.parseColor(ColorScheme.colorAccent))
+        middle_view.setBackgroundColor(Color.parseColor(ColorScheme.colorAccent))
+        bottom_view.setBackgroundColor(Color.parseColor(ColorScheme.colorAccent))
+        order_text_view.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
+        order_text_view.setTextColor(Color.parseColor(ColorScheme.colorText))
+        order_total.setTextColor(Color.parseColor(ColorScheme.colorText))
+        order_total.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
+        button_place_order.setTextColor(Color.parseColor(ColorScheme.colorText))
+        button_place_order.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
+        order_toolbar.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
+        (order_toolbar as Toolbar).getNavigationIcon()?.setColorFilter(Color.parseColor(ColorScheme.colorAccent), PorterDuff.Mode.SRC_ATOP)
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {

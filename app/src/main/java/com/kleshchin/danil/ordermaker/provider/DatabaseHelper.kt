@@ -6,7 +6,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.kleshchin.danil.ordermaker.activities.CategoryActivity
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
 import com.kleshchin.danil.ordermaker.models.Meal
 
@@ -30,6 +29,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val KEY_MEAL_PRICE = "Meal_Price"
         val KEY_MEAL_INFO = "Meal_Info"
         val KEY_MEAL_CATEGORY_ID = "Meal_Category_Id"
+        val KEY_MEAL_COUNT = "Meal_Count"
 
 
         fun createCategoryContentValues(categories: ArrayList<CategoryMeal>): Array<ContentValues> {
@@ -53,6 +53,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 contentValues.put(KEY_MEAL_PRICE, categories[i].price)
                 contentValues.put(KEY_MEAL_INFO, categories[i].info)
                 contentValues.put(KEY_MEAL_CATEGORY_ID, categories[i].categoryId)
+                contentValues.put(KEY_MEAL_COUNT, categories[i].count)
                 contentValuesArray[i] = contentValues
             }
             return contentValuesArray
@@ -82,7 +83,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     val price = data.getInt(data.getColumnIndex(KEY_MEAL_PRICE))
                     val info = data.getString(data.getColumnIndex(KEY_MEAL_INFO))
                     val categoryId = data.getInt(data.getColumnIndex(KEY_MEAL_CATEGORY_ID))
-                    val meal = Meal(categoryId, name, iconUrl, price, false, info)
+                    val count = data.getInt(data.getColumnIndex(KEY_MEAL_COUNT))
+                    val meal = Meal(categoryId, name, iconUrl, price, false, info, count)
                     competitions.add(meal)
                 } while (data.moveToNext())
                 return competitions
@@ -120,6 +122,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             KEY_MEAL_NAME + TEXT_TYPE + COMMA_SEP +
             KEY_MEAL_ICON_URL + TEXT_TYPE + COMMA_SEP +
             KEY_MEAL_PRICE + INT_TYPE + COMMA_SEP +
+            KEY_MEAL_COUNT + INT_TYPE + COMMA_SEP +
             KEY_MEAL_INFO + TEXT_TYPE + BRACKET_RIGHT_SEP
 
     private val DROP_CATEGORY_TABLE = "DROP TABLE IF EXISTS " + CATEGORY_TABLE

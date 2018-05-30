@@ -1,4 +1,4 @@
-package com.kleshchin.danil.ordermaker;
+package com.kleshchin.danil.ordermaker
 
 import com.kleshchin.danil.ordermaker.models.Meal
 import com.kleshchin.danil.ordermaker.utilities.OrderJsonParser

@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:layout_gravity="center"
+    android:id="@+id/container_background"
     android:layout_marginBottom="2dp"
     android:layout_marginTop="2dp"
     app:cardBackgroundColor="@color/colorItemBackground">
@@ -40,6 +41,31 @@
             android:textColor="@android:color/white"
             android:textSize="23sp"
             tools:text="Первое"/>
+
+        <TextView
+            android:id="@+id/x_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/palatino_linotype"
+            android:gravity="center"
+            android:maxLength="10"
+            android:textColor="@android:color/white"
+            android:textSize="23sp"
+            tools:text="x"/>
+
+        <TextView
+            android:id="@+id/order_meal_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/palatino_linotype"
+            android:gravity="center"
+            android:maxLength="10"
+            android:textColor="@android:color/white"
+            android:textSize="23sp"
+            android:visibility="gone"
+            tools:text="4"/>
 
         <TextView
             android:id="@+id/order_meal_price"

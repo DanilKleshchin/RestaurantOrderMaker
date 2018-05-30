@@ -31,16 +31,22 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
     private val MEAL_CODE = 1
     private val TAG = "OrderMakerRepository"
     private val OKHTTP_TAG = "OrderMakerRepository"
-    val SERVER_ADDRESS = "http://192.168.0.102:3000"
+    val SERVER_ADDRESS = "http://192.168.0.100:3000"
+    val DESIGN_ADDRESS = "/assets/images/design/logo.png"
 
     private var categoryListener: OnReceiveCategoryInformationListener? = null
     private var mealListener: OnReceiveMealInformationListener? = null
     private var orderStatusListener: OnOrderStatusListener? = null
     private var onReportReceiveListener: OnReportReceiveListener? = null
+    private var onReceiveColorSchemeListener: OnReceiveColorSchemeListener? = null
     private var context: WeakReference<Context>? = null
 
     interface OnReceiveCategoryInformationListener {
         fun onCategoryReceive(categoryList: ArrayList<CategoryMeal>?)
+    }
+
+    interface OnReceiveColorSchemeListener {
+        fun onColorSchemeReceive()
     }
 
     interface OnReceiveMealInformationListener {
@@ -73,8 +79,8 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
         onReportReceiveListener = listener
     }
 
-    fun adding(a: Int, b: Int): Int {
-        return a + b;
+    fun setOnReceiveColorSchemeListener(listener: OnReceiveColorSchemeListener) {
+        onReceiveColorSchemeListener = listener
     }
 
     fun loadCategory() {
@@ -83,12 +89,16 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     fun loadReport() {
-        ReportDownloader.execute()
+        ReportDownloader().execute()
     }
 
     fun loadMeal(categoryId: Int) {
         val loader = InfoDownloader(InfoDownloader.Models.Meal, categoryId)
         loader.execute()
+    }
+
+    fun loadColorScheme() {
+        ColorSchemeDownloader().execute()
     }
 
     fun sendOrder(order: Order) {
@@ -102,6 +112,24 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                     .build()
             val request = Request.Builder()
                     .url(SERVER_ADDRESS + "/order")
+                    .post(requestBody)
+                    .build()
+            Log.i(OKHTTP_TAG, "POST " + request.url() + " " + requestBody.toString())
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful()) {
+                Log.e(TAG, response.toString())
+            }
+        }.start()
+    }
+
+    fun sendReport(report: String) {
+        Thread {
+            val client = OkHttpClient()
+            val requestBody = FormBody.Builder()
+                    .add("text", report)
+                    .build()
+            val request = Request.Builder()
+                    .url(SERVER_ADDRESS + "/report")
                     .post(requestBody)
                     .build()
             Log.i(OKHTTP_TAG, "POST " + request.url() + " " + requestBody.toString())
@@ -189,7 +217,6 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                     e.printStackTrace()
                 }
                 val jsonData = responses?.body()?.string() ?: return
-                Log.i(OKHTTP_TAG, jsonData)
 
                 val resolver = context?.get()?.contentResolver
                 if (resolver != null) {
@@ -253,7 +280,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                     e.printStackTrace()
                 }
                 val orderList: ArrayList<Order> = ArrayList()
-                val jsonData = responses?.body()?.string()
+                val jsonData = responses?.body()?.string() ?: return null
                 Log.i(OKHTTP_TAG, jsonData)
                 val jsonArray = JSONArray(jsonData)
                 for (i in 0..(jsonArray.length() - 1)) {
@@ -275,7 +302,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
     }
 
-    private object ReportDownloader: AsyncTask<Void, Void, ArrayList<String>?>() {
+    private class ReportDownloader : AsyncTask<Void, Void, ArrayList<String>?>() {
 
         override fun doInBackground(vararg p0: Void?): ArrayList<String>? {
             return loadOrderStatus()
@@ -302,14 +329,49 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                val jsonData = responses?.body()?.string()
+                val jsonData = responses?.body()?.string() ?: return null
                 Log.i(OKHTTP_TAG, jsonData)
-                return OrderJsonParser.parseReportJson(jsonData!!)
+                return OrderJsonParser.parseReportJson(jsonData)
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
             return null
         }
+    }
 
+    private class ColorSchemeDownloader : AsyncTask<Void, Void, Void>() {
+
+        override fun doInBackground(vararg p0: Void?): Void? {
+            loadColorScheme()
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            onReceiveColorSchemeListener!!.onColorSchemeReceive()
+            super.onPostExecute(result)
+        }
+
+        private fun loadColorScheme() {
+            try {
+                val url = SERVER_ADDRESS + "/assets/images/design/color_scheme.json"
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                        .url(url)
+                        .build()
+                var responses: Response? = null
+                try {
+                    responses = client.newCall(request).execute()
+                    Log.i(OKHTTP_TAG, "Load url " + url)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                val jsonData = responses?.body()?.string() ?: return
+                Log.i(OKHTTP_TAG, jsonData)
+                OrderJsonParser.parseColorScheme(jsonData)
+                return
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }
     }
 }

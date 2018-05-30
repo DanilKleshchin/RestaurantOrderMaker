@@ -1,42 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/meal_toolbar"
-        layout="@layout/toolbar"/>
-
-    <View
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorAccent"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/pull_to_refresh"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="match_parent">
+        <include
+            android:id="@+id/meal_toolbar"
+            layout="@layout/toolbar"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/meal_recycler_view"
+        <View
+            android:id="@+id/top_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:scrollbarSize="4dp"
-            android:scrollbarThumbVertical="@drawable/scrollbar"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/item_meal_recycler_view"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="2dp"
+            android:background="@color/colorAccent"/>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/pull_to_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/meal_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:scrollbarSize="4dp"
+                android:scrollbarThumbVertical="@drawable/scrollbar"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_meal_recycler_view"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/meal_empty_view"
-        android:layout_width="50dp"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="1"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/basket_button"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:fontFamily="@font/palatino_linotype"
+        android:text="Корзина"
+        android:gravity="center"
+        android:textColor="@color/mealInfoColor"
+        android:textSize="20sp"/>
+</RelativeLayout>
+

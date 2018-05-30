@@ -2,9 +2,11 @@ package com.kleshchin.danil.ordermaker.utilities;
 
 import com.kleshchin.danil.ordermaker.OrderMakerRepository
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
+import com.kleshchin.danil.ordermaker.models.ColorScheme
 import com.kleshchin.danil.ordermaker.models.Meal
 import org.json.JSONArray
 import org.json.JSONException
+import org.json.JSONObject
 
 /**
  * Created by Danil Kleshchin on 21-May-18.
@@ -22,7 +24,7 @@ object OrderJsonParser {
                 val imageUrl = OrderMakerRepository.SERVER_ADDRESS + jsonObject.getString("imageUrl")
                 val price = jsonObject.getInt("price")
                 val description = jsonObject.getString("description")
-                mealList.add(Meal(categoryId, name, imageUrl, price, false, description))
+                mealList.add(Meal(categoryId, name, imageUrl, price, false, description, 0))
             }
         }
         return mealList
@@ -50,5 +52,15 @@ object OrderJsonParser {
             reportList.add(jsonArray.getJSONObject(i).getString("text"))
         }
         return reportList
+    }
+
+    @Throws(JSONException::class)
+    fun parseColorScheme(jsonData: String) {
+        val jsonObject = JSONObject(jsonData)
+        var colorAccent = jsonObject.getString("colorAccent")
+        var colorText = jsonObject.getString("colorText")
+        var colorItemBackground = jsonObject.getString("colorItemBackground")
+        var colorBackground = jsonObject.getString("colorBackground")
+        ColorScheme.setData(colorAccent, colorText, colorItemBackground, colorBackground)
     }
 }

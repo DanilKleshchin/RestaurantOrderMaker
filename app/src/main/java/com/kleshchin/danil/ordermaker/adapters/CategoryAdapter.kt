@@ -1,6 +1,7 @@
 package com.kleshchin.danil.ordermaker.adapters
 
 import android.content.Intent
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.activities.MealActivity
 import com.kleshchin.danil.ordermaker.activities.ReportActivity
 import com.kleshchin.danil.ordermaker.models.CategoryMeal
+import com.kleshchin.danil.ordermaker.models.ColorScheme
 import com.kleshchin.danil.ordermaker.utilities.inflate
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_category_recycler_view.view.*
@@ -59,6 +61,13 @@ class CategoryAdapter(): RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder
             this.mealCategory = mealCategory
             view.category_name.text = mealCategory.categoryName
             Picasso.with(view.context).load(mealCategory.categoryImageUrl).into(view.category_icon)
+
+            var deepColor = Color.parseColor(ColorScheme.colorText)
+            view.category_name.setTextColor(deepColor)
+            deepColor = Color.parseColor(ColorScheme.colorAccent)
+            view.vertical_view.setBackgroundColor(deepColor)
+            deepColor = Color.parseColor(ColorScheme.colorItemBackground)
+            view.background_card.setCardBackgroundColor(deepColor)
         }
     }
 }

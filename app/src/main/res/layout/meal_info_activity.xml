@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/container_background"
     android:background="@color/colorItemBackground"
     android:orientation="vertical">
 
@@ -12,6 +13,7 @@
         layout="@layout/toolbar"/>
 
     <View
+        android:id="@+id/top_view"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/colorAccent"/>
@@ -28,6 +30,7 @@
         tools:text="Суши"/>
 
     <View
+        android:id="@+id/middle_view"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/colorAccent"/>
@@ -38,9 +41,9 @@
         android:orientation="vertical">
 
         <ScrollView
+            android:id="@+id/scrollbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbarThumbVertical="@drawable/scrollbar"
             android:layout_weight="1">
 
             <LinearLayout
@@ -71,6 +74,7 @@
         </ScrollView>
 
         <View
+            android:id="@+id/bottom_view"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="@color/colorAccent"/>
