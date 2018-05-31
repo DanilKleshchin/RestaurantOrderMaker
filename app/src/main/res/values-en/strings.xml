@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mobile menu</string>
+    <string name="basket">basket</string>
+    <string name="status">Status</string>
+    <string name="add_to_basket">Add to basket</string>
+    <string name="your_order">Your order</string>
+    <string name="order_in_queue">Your order</string>
+    <string name="place_order">Place order</string>
+    <string name="order_status">Order status</string>
+    <string name="order_total">Total: %1$s руб</string>
+    <string name="advert_label">Advertisement</string>
+    <string name="composition">Composition</string>
+    <string name="dialog_title">Order status</string>
+</resources>

@@ -24,7 +24,8 @@ object OrderJsonParser {
                 val imageUrl = OrderMakerRepository.SERVER_ADDRESS + jsonObject.getString("imageUrl")
                 val price = jsonObject.getInt("price")
                 val description = jsonObject.getString("description")
-                mealList.add(Meal(categoryId, name, imageUrl, price, false, description, 0))
+                val id = jsonObject.getInt("id")
+                mealList.add(Meal(categoryId, name, imageUrl, price, false, description, 0, id))
             }
         }
         return mealList
@@ -62,5 +63,11 @@ object OrderJsonParser {
         var colorItemBackground = jsonObject.getString("colorItemBackground")
         var colorBackground = jsonObject.getString("colorBackground")
         ColorScheme.setData(colorAccent, colorText, colorItemBackground, colorBackground)
+    }
+
+    @Throws(JSONException::class)
+    fun parseComposition(jsonData: String): String {
+        val jsonArray = JSONArray(jsonData)
+        return jsonArray.getJSONObject(0).getString("text")
     }
 }

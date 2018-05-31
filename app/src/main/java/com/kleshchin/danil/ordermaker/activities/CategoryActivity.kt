@@ -1,5 +1,7 @@
 package com.kleshchin.danil.ordermaker.activities
 
+import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -10,7 +12,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import com.facebook.stetho.Stetho
+import com.kleshchin.danil.ordermaker.AdvertFragment
 import com.kleshchin.danil.ordermaker.OrderMakerRepository
 import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.adapters.CategoryAdapter
@@ -18,23 +24,35 @@ import com.kleshchin.danil.ordermaker.models.CategoryMeal
 import com.kleshchin.danil.ordermaker.models.ColorScheme
 import com.kleshchin.danil.ordermaker.models.Order
 import com.kleshchin.danil.ordermaker.utilities.MacAddressGetter
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.category_activity.*
 import kotlinx.android.synthetic.main.toolbar.*
-import android.graphics.Color.parseColor
-import com.squareup.picasso.NetworkPolicy
+import java.util.*
 
 
 class CategoryActivity : AppCompatActivity(), OrderMakerRepository.OnReceiveCategoryInformationListener,
-        OrderMakerRepository.OnOrderStatusListener, OrderMakerRepository.OnReceiveColorSchemeListener {
+        OrderMakerRepository.OnOrderStatusListener, OrderMakerRepository.OnReceiveColorSchemeListener, AdvertFragment.OnCompletionListener, CategoryAdapter.CategoryViewHolder.OnInfoClickListener {
+
+    companion object {
+        val KEY_SHOW_ADVERT = "KEY_SHOW_ADVERT"
+    }
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: CategoryAdapter
     private var categories: ArrayList<CategoryMeal> = ArrayList()
+    private val advertFragment = AdvertFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.category_activity)
+
+        val bundle = intent.extras
+        if (bundle != null) {
+            if (bundle.getBoolean(KEY_SHOW_ADVERT)) {
+                showAdvert()
+            }
+        }
 
         Stetho.initializeWithDefaults(this)
 
@@ -74,8 +92,42 @@ class CategoryActivity : AppCompatActivity(), OrderMakerRepository.OnReceiveCate
         linearLayoutManager = LinearLayoutManager(this)
         category_recycler_view.layoutManager = this.linearLayoutManager
         adapter = CategoryAdapter(categoryList)
+        adapter.setOnInfoClickListener(this)
         category_recycler_view.adapter = adapter
         changeRecyclerViewVisibility()
+    }
+
+    fun showAdvert() {
+        category_container.visibility = GONE
+        fragmentManager.beginTransaction()
+                .replace(R.id.advert_container, advertFragment)
+                .commit()
+        advertFragment.setOnCompletionListener(this)
+    }
+
+    override fun onInfoClick() {
+        onStatusClick()
+    }
+
+    override fun onLanguageClick() {
+        showRadioButtonDialog()
+    }
+
+    override fun OnCompletion() {
+        fragmentManager.beginTransaction().remove(fragmentManager.findFragmentById(R.id.advert_container)).commit()
+        category_container.visibility = VISIBLE
+    }
+
+    fun setLocale(lang: String) {
+        val myLocale = Locale(lang)
+        val res = resources
+        val dm = res.displayMetrics
+        val conf = res.configuration
+        conf.locale = myLocale
+        res.updateConfiguration(conf, dm)
+        val refresh = Intent(this, CategoryActivity::class.java)
+        startActivity(refresh)
+        finish()
     }
 
     override fun onColorSchemeReceive() {
@@ -141,6 +193,37 @@ class CategoryActivity : AppCompatActivity(), OrderMakerRepository.OnReceiveCate
     }
 
     override fun onBackPressed() {
+
+    }
+
+    private fun showRadioButtonDialog() {
+
+        // custom dialog
+        val dialog = Dialog(this)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle("Выберите язык")
+        builder.setNegativeButton("OK") { dialog, id ->
+
+        }
+        dialog.setContentView(R.layout.language_picker)
+        val stringList = ArrayList<String>()  // here is list
+        for (i in 0..4) {
+            stringList.add("RadioButton " + (i + 1))
+        }
+        val rg: RadioGroup = dialog.findViewById(R.id.radio_group)
+        val button: Button = dialog.findViewById(R.id.button_ok)
+        button.setOnClickListener {
+            val radioButtonID = rg.getCheckedRadioButtonId()
+            val radioButton: RadioButton = rg.findViewById(radioButtonID)
+            val idx = rg.indexOfChild(radioButton)
+            when (idx) {
+                0 -> setLocale("RU")
+                1 -> setLocale("EN")
+            }
+
+        }
+
+        dialog.show()
 
     }
 }

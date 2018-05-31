@@ -52,7 +52,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:fontFamily="@font/palatino_linotype"
-        android:text="Корзина"
+        android:text="@string/basket"
         android:gravity="center"
         android:textColor="@color/mealInfoColor"
         android:textSize="20sp"/>

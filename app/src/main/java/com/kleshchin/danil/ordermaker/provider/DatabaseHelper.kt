@@ -54,6 +54,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 contentValues.put(KEY_MEAL_INFO, categories[i].info)
                 contentValues.put(KEY_MEAL_CATEGORY_ID, categories[i].categoryId)
                 contentValues.put(KEY_MEAL_COUNT, categories[i].count)
+                contentValues.put(KEY_ID, categories[i].id)
                 contentValuesArray[i] = contentValues
             }
             return contentValuesArray
@@ -84,7 +85,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     val info = data.getString(data.getColumnIndex(KEY_MEAL_INFO))
                     val categoryId = data.getInt(data.getColumnIndex(KEY_MEAL_CATEGORY_ID))
                     val count = data.getInt(data.getColumnIndex(KEY_MEAL_COUNT))
-                    val meal = Meal(categoryId, name, iconUrl, price, false, info, count)
+                    val id = data.getInt(data.getColumnIndex(KEY_ID))
+                    val meal = Meal(categoryId, name, iconUrl, price, false, info, count, id)
                     competitions.add(meal)
                 } while (data.moveToNext())
                 return competitions

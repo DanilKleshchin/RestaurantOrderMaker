@@ -5,7 +5,6 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:theme="@style/ToolbarTheme"
     app:contentInsetLeft="0dp"
     app:contentInsetStart="0dp">
 
@@ -14,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:contentDescription="@null"
-        android:scaleType="fitXY"
         tools:showIn="@layout/category_activity"
         tools:src="@drawable/ocaka_logo_icon"/>
 </android.support.v7.widget.Toolbar>

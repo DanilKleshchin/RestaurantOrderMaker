@@ -39,6 +39,7 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
     private var orderStatusListener: OnOrderStatusListener? = null
     private var onReportReceiveListener: OnReportReceiveListener? = null
     private var onReceiveColorSchemeListener: OnReceiveColorSchemeListener? = null
+    private var onReceiveCompositionListener: OnReceiveCompositionListener? = null
     private var context: WeakReference<Context>? = null
 
     interface OnReceiveCategoryInformationListener {
@@ -59,6 +60,10 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
     interface OnReportReceiveListener {
         fun onReportReceive(reportList: ArrayList<String>?)
+    }
+
+    interface OnReceiveCompositionListener {
+        fun onReceiveComposition(composition: String)
     }
 
     fun setOnReceiveMealInformationListener(context: Context, listener: OnReceiveMealInformationListener) {
@@ -83,6 +88,10 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
         onReceiveColorSchemeListener = listener
     }
 
+    fun setOnReceiveCompositionListener(listener: OnReceiveCompositionListener) {
+        onReceiveCompositionListener = listener
+    }
+
     fun loadCategory() {
         val categoryLoader = InfoDownloader(InfoDownloader.Models.Category)
         categoryLoader.execute()
@@ -99,6 +108,10 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
 
     fun loadColorScheme() {
         ColorSchemeDownloader().execute()
+    }
+
+    fun loadComposition(name: String) {
+        CompositionDownloader(name).execute()
     }
 
     fun sendOrder(order: Order) {
@@ -372,6 +385,41 @@ object OrderMakerRepository : LoaderManager.LoaderCallbacks<Cursor> {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    private class CompositionDownloader(var id: String) : AsyncTask<Void, Void, String>() {
+
+        override fun doInBackground(vararg p0: Void?): String? {
+            return loadColorScheme()
+        }
+
+        override fun onPostExecute(result: String?) {
+            onReceiveCompositionListener!!.onReceiveComposition(result!!)
+            super.onPostExecute(result)
+        }
+
+        private fun loadColorScheme(): String {
+            try {
+                val url = SERVER_ADDRESS + "/composition?mealId=" + id
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                        .url(url)
+                        .build()
+                var responses: Response? = null
+                try {
+                    responses = client.newCall(request).execute()
+                    Log.i(OKHTTP_TAG, "Load url " + url)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                val jsonData = responses?.body()?.string() ?: return ""
+                Log.i(OKHTTP_TAG, jsonData)
+                return OrderJsonParser.parseComposition(jsonData)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            return ""
         }
     }
 }

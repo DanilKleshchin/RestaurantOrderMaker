@@ -20,6 +20,7 @@ import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
 import android.view.View
 import com.kleshchin.danil.ordermaker.OrderMakerRepository
+import com.kleshchin.danil.ordermaker.activities.CategoryActivity.Companion.KEY_SHOW_ADVERT
 import com.kleshchin.danil.ordermaker.models.ColorScheme
 import com.kleshchin.danil.ordermaker.models.Order
 import com.kleshchin.danil.ordermaker.utilities.MacAddressGetter
@@ -134,6 +135,9 @@ class OrderActivity : AppCompatActivity(), View.OnClickListener {
     private fun openCategoryActivity() {
         val intent = Intent(this@OrderActivity, CategoryActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        var bundle = Bundle()
+        bundle.putBoolean(KEY_SHOW_ADVERT, true)
+        intent.putExtras(bundle)
         startActivity(intent)
     }
 

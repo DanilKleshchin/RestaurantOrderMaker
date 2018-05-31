@@ -4,37 +4,37 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import android.view.View
 import com.kleshchin.danil.ordermaker.OrderMakerRepository
 import com.kleshchin.danil.ordermaker.R
 import com.kleshchin.danil.ordermaker.models.ColorScheme
 import com.kleshchin.danil.ordermaker.models.Meal
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.meal_info_activity.*
+import kotlinx.android.synthetic.main.composition_activity.*
 import kotlinx.android.synthetic.main.toolbar.*
 
-class MealInfoActivity : AppCompatActivity(), View.OnClickListener {
+class CompositionActivity : AppCompatActivity(), OrderMakerRepository.OnReceiveCompositionListener {
+
     private var meal: Meal? = null
 
     companion object {
         val MEAL_KEY = "MEAL_KEY"
-        var KEY_CHECKED_STATUS = "KEY_CHECKED_STATUS"
 
-        fun getMealInfoIntent(context: Context, meal: Meal?): Intent {
-            val intent = Intent(context, MealInfoActivity::class.java)
+        fun getMealCompositionIntent(context: Context, meal: Meal?): Intent {
+            val intent = Intent(context, CompositionActivity::class.java)
             return intent.putExtra(MEAL_KEY, meal)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.meal_info_activity)
+        setContentView(R.layout.composition_activity)
 
-        setSupportActionBar(meal_info_toolbar as Toolbar)
+
+        setSupportActionBar(meal_composition_toolbar as Toolbar)
         val actionBar = supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
@@ -45,23 +45,20 @@ class MealInfoActivity : AppCompatActivity(), View.OnClickListener {
         val url = OrderMakerRepository.SERVER_ADDRESS + OrderMakerRepository.DESIGN_ADDRESS
         Picasso.with(this).load(url).into(toolbar_logo_image)
 
-        button_show_composition.setOnClickListener(this)
+
         this.meal = intent.getParcelableExtra(MEAL_KEY)
         meal_info_meal_name.text = this.meal?.name
-        Picasso.with(this).load(this.meal?.iconUrl).into(meal_info_meal_icon)
-        meal_info_info.text = this.meal?.info
 
+        OrderMakerRepository.loadComposition(meal!!.id.toString())
+        OrderMakerRepository.setOnReceiveCompositionListener(this)
         top_view.setBackgroundColor(Color.parseColor(ColorScheme.colorAccent))
         middle_view.setBackgroundColor(Color.parseColor(ColorScheme.colorAccent))
-        bottom_view.setBackgroundColor(Color.parseColor(ColorScheme.colorAccent))
         container_background.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
         meal_info_meal_name.setTextColor(Color.parseColor(ColorScheme.colorText))
         meal_info_info.setTextColor(Color.parseColor(ColorScheme.colorText))
-        button_show_composition.setTextColor(Color.parseColor(ColorScheme.colorText))
-        button_show_composition.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
-        meal_info_toolbar.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
+        meal_composition_toolbar.setBackgroundColor(Color.parseColor(ColorScheme.colorItemBackground))
 
-        (meal_info_toolbar as Toolbar).getNavigationIcon()?.setColorFilter(Color.parseColor(ColorScheme.colorAccent), PorterDuff.Mode.SRC_ATOP)
+        (meal_composition_toolbar as Toolbar).getNavigationIcon()?.setColorFilter(Color.parseColor(ColorScheme.colorAccent), PorterDuff.Mode.SRC_ATOP)
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
@@ -71,11 +68,7 @@ class MealInfoActivity : AppCompatActivity(), View.OnClickListener {
         return super.onOptionsItemSelected(menuItem)
     }
 
-    override fun onClick(p0: View?) {
-        when (p0) {
-            button_show_composition -> {
-                startActivity(CompositionActivity.getMealCompositionIntent(this, meal))
-            }
-        }
+    override fun onReceiveComposition(composition: String) {
+        meal_info_info.text = composition
     }
 }
